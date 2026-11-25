@@ -1,0 +1,228 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* `.dark` on <html> comes from shared/lib/theme (System, Light or Dark). */
+@custom-variant dark (&:is(.dark *));
+
+/* ── Graphite theme ───────────────────────────────────────────────────
+   Calm grayscale surfaces in light and dark. Color is kept for state:
+   attention (needs you, proposed), operational (recording, logged),
+   critical (errors) and pending (a proposal waiting for approval). Weight 300 only at 22 px and up. */
+@theme {
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+}
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  /* Text steps, strongest first. t5 is for decoration only (below AA). */
+  --color-t1: var(--t1);
+  --color-t2: var(--t2);
+  --color-t3: var(--t3);
+  --color-t4: var(--t4);
+  --color-t5: var(--t5);
+  --color-attention: var(--attention);
+  --color-pending: var(--pending);
+  --color-well: var(--well);
+  --color-attention-foreground: #18181a;
+  --color-operational: var(--operational);
+  --color-critical: var(--critical);
+  --color-selected: var(--selected);
+  --color-warm: var(--warm);
+  --color-warm-foreground: var(--warm-foreground);
+  --color-warm-item: var(--warm-item);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  /* Timeline blocks: small radius so icons keep clear of the corner. */
+  --radius-block: 0.75rem;
+}
+
+:root {
+  color-scheme: light;
+  --radius: 0.875rem;
+  --t1: #1c1c1e;
+  --t2: #36363a;
+  --t3: #55555a;
+  --t4: #6e6e73;
+  --t5: #9a9a9f;
+  --background: #f1f1f3;
+  /* A recessed surface under the timeline, so its cards stand out. */
+  --well: #e6e6ea;
+  --foreground: var(--t1);
+  --card: rgb(255 255 255 / 72%);
+  --card-foreground: var(--t1);
+  --popover: rgb(252 252 253 / 92%);
+  --popover-foreground: var(--t1);
+  --primary: var(--t1);
+  --primary-foreground: #f6f6f7;
+  --secondary: rgb(20 20 24 / 6%);
+  --secondary-foreground: var(--t1);
+  --muted: rgb(20 20 24 / 5%);
+  --muted-foreground: var(--t4);
+  --accent: rgb(20 20 24 / 8%);
+  --accent-foreground: var(--t1);
+  --destructive: #c62f2f;
+  --border: rgb(20 20 24 / 9%);
+  --input: rgb(20 20 24 / 14%);
+  --ring: rgb(20 20 24 / 40%);
+  --attention: #f39444;
+  --pending: #4f6bed;
+  --operational: #3fa63a;
+  --critical: #c62f2f;
+  --selected: rgb(226 226 232 / 92%);
+  --warm: rgb(247 220 204 / 70%);
+  --warm-foreground: #965234;
+  --warm-panel: rgb(252 238 230 / 92%);
+  --warm-item: rgb(150 82 52 / 6%);
+  --glass-edge: rgb(20 20 24 / 7%);
+  --backdrop: #f1f1f3;
+  --shadow-glass: 0 1px 2px rgb(0 0 0 / 4%);
+  --shadow-frost: 0 8px 24px rgb(0 0 0 / 8%);
+}
+
+.dark {
+  color-scheme: dark;
+  --t1: #d6d6d6;
+  --t2: #c9c9c9;
+  --t3: #a8a8a8;
+  --t4: #8a8a8a;
+  --t5: #6e6e6e;
+  --background: #19191b;
+  --well: #121214;
+  --card: rgb(30 30 32 / 72%);
+  --popover: rgb(38 38 40 / 86%);
+  --primary-foreground: #18181a;
+  --secondary: rgb(255 255 255 / 8%);
+  --muted: rgb(255 255 255 / 5%);
+  --accent: rgb(255 255 255 / 10%);
+  --destructive: #ff4747;
+  --border: rgb(255 255 255 / 8%);
+  --input: rgb(255 255 255 / 12%);
+  --ring: rgb(255 255 255 / 45%);
+  --pending: #8197ff;
+  --operational: #5ec557;
+  --critical: #ff4747;
+  --selected: rgb(46 46 49 / 86%);
+  --warm: rgb(120 78 66 / 36%);
+  --warm-foreground: #ffece4;
+  --warm-panel: rgb(64 46 43 / 66%);
+  --warm-item: rgb(255 236 228 / 6%);
+  --glass-edge: rgb(255 255 255 / 7%);
+  --backdrop: #19191b;
+  --shadow-glass: 0 16px 40px rgb(0 0 0 / 35%);
+  --shadow-frost: 0 22px 54px rgb(0 0 0 / 45%);
+}
+
+/* macOS and Windows "Reduce transparency": solid surfaces, no blur. */
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --card: #fafafb;
+    --popover: #fcfcfd;
+    --warm-panel: #fcefe7;
+  }
+  .dark {
+    --card: #1e1e20;
+    --popover: #262628;
+    --warm-panel: #3a2c29;
+  }
+  .glass,
+  .frost,
+  .warm-panel {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* Calm frosted surface for cards, bars and panels. */
+@utility glass {
+  background-color: var(--card);
+  backdrop-filter: blur(24px) saturate(115%);
+  -webkit-backdrop-filter: blur(24px) saturate(115%);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--shadow-glass);
+}
+
+/* Floating layer above glass: details card, popovers, palette. */
+@utility frost {
+  background-color: var(--popover);
+  backdrop-filter: blur(24px) saturate(115%);
+  -webkit-backdrop-filter: blur(24px) saturate(115%);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--shadow-frost);
+}
+
+/* "Needs you" surfaces: the only tinted glass. */
+@utility warm-panel {
+  background-color: var(--warm-panel);
+  backdrop-filter: blur(28px) saturate(120%);
+  -webkit-backdrop-filter: blur(28px) saturate(120%);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--shadow-frost);
+  color: var(--t1);
+}
+
+/* Tick bars, after the Vexto cards: empty, filled and attention. */
+@utility ticks {
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--t1) 16%, transparent) 0 1px,
+    transparent 1px 4px
+  );
+}
+
+@utility ticks-on {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--t1) 0 1px,
+    transparent 1px 4px
+  );
+}
+
+@utility ticks-attention {
+  background: repeating-linear-gradient(
+    90deg,
+    var(--attention) 0 1px,
+    transparent 1px 4px
+  );
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}

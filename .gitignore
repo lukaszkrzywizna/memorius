@@ -1,0 +1,12 @@
+node_modules/
+dist/
+coverage/
+storybook-static/
+test-results/
+playwright-report/
+target/
+*.log
+.DS_Store
+/apps/desktop/src-tauri/gen/
+.preflight/
+/apps/desktop/src-tauri/binaries/

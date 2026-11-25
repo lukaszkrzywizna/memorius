@@ -1,0 +1,37 @@
+[package]
+name = "memorius-desktop"
+version = "0.1.2"
+description = "Memorius desktop app"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lib]
+name = "memorius_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.5", features = [] }
+
+[dependencies]
+chacha20poly1305 = "0.10.1"
+jiff = "0.2"
+keyring = "4.2.0"
+memorius-core = { path = "../../../crates/memorius-core" }
+memorius-sources = { path = "../../../crates/memorius-sources", features = [
+  "store",
+] }
+percent-encoding = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tauri = { version = "2.12", features = ["tray-icon", "image-png"] }
+tauri-plugin-autostart = "2.5"
+tauri-plugin-notification = "=2.5.1"
+tauri-plugin-single-instance = "2.3"
+tauri-plugin-updater = "=2.14.1"
+ts-rs = "12"
+url = "2"
+
+[lints]
+workspace = true

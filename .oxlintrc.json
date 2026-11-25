@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "jsx-a11y", "import", "unicorn", "vitest"],
+  "categories": {
+    "correctness": "error"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2024": true
+  },
+  "ignorePatterns": [
+    "**/dist",
+    "**/storybook-static",
+    "**/*.gen.*",
+    "apps/desktop/src/shared/api/generated",
+    "apps/desktop/src-tauri"
+  ],
+  "rules": {
+    "vitest/require-mock-type-parameters": "off",
+    "jsx-a11y/prefer-tag-over-role": "off"
+  }
+}

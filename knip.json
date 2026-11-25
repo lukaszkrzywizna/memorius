@@ -1,0 +1,19 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "rules": {
+    "catalog": "off"
+  },
+  "ignoreBinaries": ["footprint", "rustc", "tauri"],
+  "workspaces": {
+    ".": {
+      "entry": ["tooling/**/*.{mjs,js,ts}"],
+      "project": ["tooling/**/*.{mjs,js,ts}"]
+    },
+    "apps/desktop": {
+      "project": ["src/**/*.{ts,tsx,css}"]
+    }
+  },
+  "ignoreIssues": {
+    "apps/desktop/src/shared/ui/*.tsx": ["exports"]
+  }
+}

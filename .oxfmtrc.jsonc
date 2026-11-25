@@ -1,0 +1,26 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "endOfLine": "lf",
+  // Keep disabled until oxfmt produces deterministic Tailwind class ordering
+  // across macOS and Windows: https://github.com/oxc-project/oxc/issues/18749
+  "sortTailwindcss": false,
+  "semi": false,
+  "singleQuote": false,
+  "tabWidth": 2,
+  "printWidth": 80,
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "**/*.gen.*",
+    "apps/desktop/src/shared/api/generated/",
+    "**/dist/",
+    "**/storybook-static/",
+    "**/playwright-report/",
+    "**/test-results/",
+    "**/coverage/",
+    "**/target/",
+    ".local/",
+    "apps/desktop/src-tauri/gen/",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+  ],
+}

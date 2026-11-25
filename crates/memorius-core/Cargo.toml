@@ -1,0 +1,27 @@
+[package]
+name = "memorius-core"
+version = "0.1.2"
+description = "Memorius model, SQLite store, recorder and timeline logic"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+rusqlite = { version = "0.41", features = ["bundled"], optional = true }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+ts-rs = "12"
+
+[features]
+default = ["store"]
+# The SQLite store and everything built on it. Off for crates that only need
+# the model (keeps their Windows cross-check free of C builds).
+store = ["dep:rusqlite"]
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

@@ -1,0 +1,8 @@
+doc-valid-idents = [
+  "YouTrack",
+  "WebView",
+  "AppKit",
+  "WebKit",
+  "ActivityWatch",
+  "..",
+]

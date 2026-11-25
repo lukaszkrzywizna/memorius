@@ -1,0 +1,10 @@
+{
+  "include": ["src/**/*.ts", "src/**/*.tsx", ".storybook/*.ts", "*.config.ts"],
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["vite/client", "vitest/globals", "node"],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

@@ -1,0 +1,79 @@
+name: Windows recording check
+
+# Manual: runs the real Windows recorder in the runner's signed-in desktop
+# session. Starts Memorius, switches between two windows with input, and
+# checks the recorded rows. (SSH sessions have no desktop, so this cannot run
+# over SSH on a VM.)
+on:
+  workflow_dispatch:
+
+jobs:
+  record:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Rust toolchain from rust-toolchain.toml
+        run: rustup show active-toolchain || rustup toolchain install
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -C apps/desktop tauri build --no-bundle
+      - name: Record two windows
+        shell: pwsh
+        run: |
+          $app = Start-Process target\release\memorius-desktop.exe -ArgumentList '--hidden' -PassThru
+          Start-Sleep 5
+          $shell = New-Object -ComObject WScript.Shell
+          $notepad = Start-Process notepad -PassThru
+          Start-Sleep 3
+          foreach ($round in 1..3) {
+            $shell.AppActivate($notepad.Id) | Out-Null
+            $shell.SendKeys('memorius ')
+            Start-Sleep 8
+            Start-Process explorer.exe -ArgumentList $env:USERPROFILE
+            Start-Sleep 8
+            $shell.SendKeys('{F5}')
+          }
+          $edge = Start-Process msedge -ArgumentList '--no-first-run', '--no-default-browser-check', '--inprivate', 'https://example.com/issue/MEM-42?token=secret' -PassThru
+          Start-Sleep 12
+          foreach ($round in 1..4) {
+            $shell.AppActivate('Example Domain') | Out-Null
+            $shell.SendKeys('{F6}')
+            $shell.SendKeys('{ESC}')
+            Start-Sleep 4
+          }
+          $app.Refresh()
+          "memorius running: $(-not $app.HasExited)"
+          "memorius private MB: $([math]::Round($app.PrivateMemorySize64 / 1MB, 1))"
+          Stop-Process -Id $app.Id
+          Stop-Process -Id $notepad.Id -Force
+          Get-Process msedge -ErrorAction SilentlyContinue | Stop-Process -Force
+      - name: Check recorded rows
+        shell: pwsh
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          $db = Join-Path $env:APPDATA 'app.memorius.desktop\memorius.db'
+          @"
+          import sqlite3, sys
+          rows = sqlite3.connect(sys.argv[1]).execute(
+              "select kind, app_name, coalesce(title, '[' || title_unavailable || ']'),"
+              " (end_ms - start_ms) / 1000, url from activity order by id").fetchall()
+          for row in rows:
+              print(" | ".join(str(value) for value in row))
+          apps = {row[1] for row in rows if row[0] == "app"}
+          print("apps:", sorted(apps))
+          if not any(name and "notepad" in name.lower() for name in apps):
+              sys.exit("no Notepad activity was recorded")
+          urls = {row[4] for row in rows if row[4]}
+          print("urls:", sorted(urls))
+          if "https://example.com/issue/MEM-42" not in urls:
+              sys.exit("the Edge address was not recorded")
+          if any("?" in url or "token" in url for url in urls):
+              sys.exit("a URL kept its query string")
+          "@ | Set-Content check.py
+          python check.py $db

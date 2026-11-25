@@ -1,0 +1,30 @@
+{
+  "fill": {
+    "linear-gradient": [
+      "srgb:0.17255,0.17255,0.18824,1.00000",
+      "srgb:0.07843,0.07843,0.08627,1.00000"
+    ]
+  },
+  "groups": [
+    {
+      "layers": [
+        {
+          "glass": false,
+          "image-name": "dial.svg",
+          "name": "dial"
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.5
+      },
+      "translucency": {
+        "enabled": false,
+        "value": 0.5
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": ["macOS"]
+  }
+}

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2C2C30"/>
+      <stop offset="1" stop-color="#141416"/>
+    </linearGradient>
+  </defs>
+  <rect x="10" y="10" width="80" height="80" rx="18" fill="url(#tile)"/>
+  <rect x="10.25" y="10.25" width="79.5" height="79.5" rx="17.75" fill="none" stroke="#FFFFFF" stroke-opacity="0.10" stroke-width="0.5"/>
+  <path d="M50.00 24.00L50.00 30.00M56.73 24.89L55.80 28.36M63.00 27.48L61.20 30.60M68.38 31.62L64.14 35.86M72.52 37.00L69.40 38.80M75.11 43.27L71.64 44.20M76.00 50.00L70.00 50.00M75.11 56.73L71.64 55.80M72.52 63.00L69.40 61.20M68.38 68.38L64.14 64.14M63.00 72.52L61.20 69.40M56.73 75.11L55.80 71.64M50.00 76.00L50.00 70.00M43.27 75.11L44.20 71.64M37.00 72.52L38.80 69.40M31.62 68.38L35.86 64.14M27.48 63.00L30.60 61.20M24.89 56.73L28.36 55.80M24.00 50.00L30.00 50.00M24.89 43.27L28.36 44.20M27.48 37.00L30.60 38.80M31.62 31.62L35.86 35.86M37.00 27.48L38.80 30.60M43.27 24.89L44.20 28.36" fill="none" stroke="#D6D6D6" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M50 34.5A15.5 15.5 0 0 1 64.74 54.79" fill="none" stroke="#F39444" stroke-width="3.4" stroke-linecap="round"/>
+  <circle cx="50" cy="50" r="3" fill="#D6D6D6"/>
+</svg>

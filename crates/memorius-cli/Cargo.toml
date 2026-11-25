@@ -1,0 +1,26 @@
+[package]
+name = "memorius-cli"
+version = "0.1.2"
+description = "memorius: activity and worklog proposals for coding agents (CLI and MCP)"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "memorius"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.6", features = ["derive"] }
+jiff = "0.2"
+memorius-core = { path = "../memorius-core" }
+memorius-sources = { path = "../memorius-sources", features = ["store"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

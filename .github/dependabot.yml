@@ -1,0 +1,11 @@
+# Pinned action commits get reviewed updates instead of moving tags.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    # One pull request for all actions.
+    groups:
+      actions:
+        patterns: ["*"]

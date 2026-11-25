@@ -1,0 +1,12 @@
+# Lefthook is only the local Git hook adapter. Validation decisions live in
+# tooling/harness/preflight.mjs so they can run outside Git hooks too.
+
+pre-commit:
+  commands:
+    preflight-fast:
+      run: pnpm agent:preflight:fast
+
+pre-push:
+  commands:
+    preflight:
+      run: pnpm agent:preflight
