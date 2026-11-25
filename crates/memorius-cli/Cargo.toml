@@ -1,6 +1,6 @@
 [package]
 name = "memorius-cli"
-version = "0.1.2"
+version = "0.1.3"
 description = "memorius: activity and worklog proposals for coding agents (CLI and MCP)"
 edition.workspace = true
 rust-version.workspace = true

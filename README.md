@@ -61,8 +61,10 @@ local certificate and installs it to `~/Applications`.
 - Architecture: [ARCHITECTURE.md](ARCHITECTURE.md)
 - Agent guide and commands: [AGENTS.md](AGENTS.md)
 - Quality gate before every commit: `pnpm agent:preflight`
-- Releases: push a `v<version>` tag that matches `tauri.conf.json`; the
-  Release workflow builds signed installers, CLI inside, into a draft release.
+- Releases: bump the version in `tauri.conf.json` and the crates, push, then
+  `pnpm release:mac` builds the signed macOS installer (CLI inside) on this Mac
+  into a draft release; publish the draft. The Release workflow (by hand)
+  also builds Windows.
 
 ## License
 

@@ -13,7 +13,7 @@ React). Read before changing code:
 - Install: `corepack enable && pnpm install` (also installs the Git hooks).
 - Run the app: `pnpm dev`. UI only: `pnpm -C apps/desktop dev`.
 - Storybook: `pnpm -C apps/desktop storybook`.
-- All gates: `pnpm agent:preflight` (pre-push; CI runs the cheap lanes on Linux per push, all lanes on macOS + Windows before a release). Quick: `pnpm agent:preflight:fast`
+- All gates: `pnpm agent:preflight` (pre-push; CI runs the cheap lanes on Linux per push, all lanes on macOS + Windows by hand or in the Release workflow). Quick: `pnpm agent:preflight:fast`
   (pre-commit, staged files). Logs: `.preflight/<lane>.log`.
 - Format: `pnpm format`.
 - Memory soak (release build, hidden): `node tooling/soak/soak.mjs --binary target/release/memorius-desktop --minutes 30`.

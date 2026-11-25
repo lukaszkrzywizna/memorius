@@ -1,11 +1,11 @@
 name: Release
 
-# A `v*` tag builds signed installers for macOS (universal) and Windows, with
-# the `memorius` CLI inside, into a draft GitHub release, with `latest.json`
-# for the in-app updater. Publish the draft to ship it.
+# By hand only: macOS releases are built on a Mac with `pnpm release:mac`
+# (no Actions minutes). This builds signed macOS (universal) and Windows
+# installers, with the `memorius` CLI inside, into a draft GitHub release
+# with `latest.json` for the in-app updater. Publish the draft to ship it.
 on:
-  push:
-    tags: ["v*"]
+  workflow_dispatch:
 
 permissions:
   contents: write
