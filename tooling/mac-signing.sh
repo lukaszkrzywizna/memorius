@@ -1,4 +1,4 @@
-# Sourced by install-mac.sh and release-mac.sh: puts the release certificate
+# Sourced by install-mac.sh: puts the release certificate
 # from ~/.memorius-release in a separate keychain for codesign and sets
 # $identity, or falls back to the local "Memorius Local Signing" certificate.
 # The keychain search list is restored on exit.

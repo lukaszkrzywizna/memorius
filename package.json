@@ -23,8 +23,7 @@
     "agent:preflight": "node tooling/harness/preflight.mjs",
     "agent:preflight:fast": "node tooling/harness/preflight.mjs --fast",
     "hooks:install": "lefthook install",
-    "install:mac": "sh tooling/install-mac.sh",
-    "release:mac": "sh tooling/release-mac.sh"
+    "install:mac": "sh tooling/install-mac.sh"
   },
   "devDependencies": {
     "@eslint/js": "catalog:",

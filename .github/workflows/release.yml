@@ -1,26 +1,32 @@
 name: Release
 
-# Windows only, by hand: macOS releases are built on a Mac with
-# `pnpm release:mac`. Builds the signed Windows installer (with the `memorius`
-# CLI inside) from an existing tag and adds it, and its entry in `latest.json`,
-# to that tag's GitHub release.
+# By hand from main: builds signed macOS (universal) and Windows installers,
+# with the `memorius` CLI inside, into a draft GitHub release named after the
+# version in tauri.conf.json, with `latest.json` for the in-app updater.
+# Publish the draft to ship it.
 on:
   workflow_dispatch:
-    inputs:
-      tag:
-        description: Release tag, for example v0.1.3
-        required: true
 
 permissions:
   contents: write
 
 jobs:
-  windows:
-    runs-on: windows-latest
+  release:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            target: universal-apple-darwin
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+    runs-on: ${{ matrix.os }}
+    env:
+      # SHA-1 of the "Memorius Release" certificate. Every release is signed
+      # with it, so macOS keeps Accessibility and other grants across updates.
+      SIGNING_IDENTITY: AE22FD5CED0A778B1BC1D795220D5C6C416A13C1
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
-        with:
-          ref: ${{ inputs.tag }}
       - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
@@ -28,23 +34,47 @@ jobs:
           cache: pnpm
       - name: Rust toolchain from rust-toolchain.toml
         run: rustup show active-toolchain || rustup toolchain install
+      - name: Rust targets for a universal macOS build
+        if: runner.os == 'macOS'
+        run: rustup target add aarch64-apple-darwin x86_64-apple-darwin
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
       - run: pnpm install --frozen-lockfile
 
+      # The certificate is self-signed: codesign accepts it by hash without
+      # trust settings, and the app's designated requirement pins its hash.
+      - name: Import the signing certificate
+        if: runner.os == 'macOS'
+        env:
+          CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          CERTIFICATE_PASSWORD: ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+        run: |
+          keychain="$RUNNER_TEMP/signing.keychain-db"
+          password="$(openssl rand -hex 16)"
+          echo "$CERTIFICATE" | base64 --decode > "$RUNNER_TEMP/release.p12"
+          security create-keychain -p "$password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$password" "$keychain"
+          security import "$RUNNER_TEMP/release.p12" -k "$keychain" -P "$CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$password" "$keychain"
+          security list-keychains -d user -s "$keychain" $(security list-keychains -d user | tr -d '"')
+          rm "$RUNNER_TEMP/release.p12"
+
       - name: Build the memorius CLI that ships inside the app
-        run: node tooling/build-cli-sidecar.mjs x86_64-pc-windows-msvc
+        run: node tooling/build-cli-sidecar.mjs ${{ matrix.target }}
 
       - uses: tauri-apps/tauri-action@1deb371b0cd8bd54025b384f1cd735e725c4060f # action-v1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          APPLE_SIGNING_IDENTITY: ${{ runner.os == 'macOS' && env.SIGNING_IDENTITY || '' }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           projectPath: apps/desktop
-          tagName: ${{ inputs.tag }}
-          releaseName: Memorius ${{ inputs.tag }}
+          tagName: v__VERSION__
+          releaseName: Memorius v__VERSION__
           releaseBody: See the README for installation steps.
+          releaseDraft: true
           args: >-
-            --target x86_64-pc-windows-msvc
+            --target ${{ matrix.target }}
             --config src-tauri/tauri.bundle.conf.json
             --config {"bundle":{"createUpdaterArtifacts":true}}
