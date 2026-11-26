@@ -1,10 +1,10 @@
 name: CI
 
-# The full preflight on macOS and Windows, only before a release (called by
-# release.yml) or by hand: a macOS minute costs ten Linux ones in a private
-# repo. checks.yml covers every push on Linux.
+# The full preflight on macOS and Windows: weekly when main changed, or by
+# hand. checks.yml covers every push and pull request on Linux.
 on:
-  workflow_call:
+  schedule:
+    - cron: "0 4 * * 1"
   workflow_dispatch:
 
 concurrency:
@@ -12,8 +12,23 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changed:
+    name: main changed this week
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.check.outputs.run }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - id: check
+        run: |
+          if [ "${{ github.event_name }}" != schedule ] || [ -n "$(git log -1 --since='7 days ago' --format=%H)" ]; then
+            echo run=true >> "$GITHUB_OUTPUT"
+          fi
+
   preflight:
     name: preflight (${{ matrix.os }})
+    needs: changed
+    if: needs.changed.outputs.run == 'true'
     strategy:
       fail-fast: false
       matrix:

@@ -1,9 +1,8 @@
 name: Checks
 
-# Every push and pull request: the cheap lanes on Linux (a Linux minute costs
-# a tenth of a macOS one in a private repo). Clippy and the Rust tests need
-# macOS or Windows; they run in CI before each release and in the local
-# pre-push preflight.
+# Every push and pull request: the fast lanes on Linux. Clippy and the Rust
+# tests need macOS or Windows; they run in the local pre-push preflight and in
+# the weekly CI (ci.yml).
 on:
   push:
     branches: [main]

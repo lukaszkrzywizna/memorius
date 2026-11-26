@@ -63,8 +63,8 @@ local certificate and installs it to `~/Applications`.
 - Quality gate before every commit: `pnpm agent:preflight`
 - Releases: bump the version in `tauri.conf.json` and the crates, push, then
   `pnpm release:mac` builds the signed macOS installer (CLI inside) on this Mac
-  into a draft release; publish the draft. The Release workflow (by hand)
-  also builds Windows.
+  into a draft release; publish the draft. Then run the Release workflow
+  with the tag (`gh workflow run release.yml -f tag=vX.Y.Z`) to add Windows.
 
 ## License
 

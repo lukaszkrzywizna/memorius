@@ -361,8 +361,9 @@ in `src-tauri/Info.plist`; keep its dial layer in step with `app-icon.svg`.
 
 ## Releases and updates
 
-A `v*` tag runs `.github/workflows/release.yml`: a universal macOS build and a
-Windows build into a draft GitHub release. The `memorius` CLI ships inside
+`pnpm release:mac` builds the universal macOS release on a Mac into a draft
+GitHub release; `.github/workflows/release.yml` (by hand, with the tag) adds the
+Windows build to it. The `memorius` CLI ships inside
 (`tooling/build-cli-sidecar.mjs` + `tauri.bundle.conf.json`, Tauri
 `externalBin`, next to the app executable); agent runs start it by path, and
 Setup → Command line links it as a command and registers it with Claude Code
