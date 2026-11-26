@@ -1,6 +1,6 @@
 [package]
 name = "memorius-core"
-version = "0.1.3"
+version = "0.1.4"
 description = "Memorius model, SQLite store, recorder and timeline logic"
 edition.workspace = true
 rust-version.workspace = true
