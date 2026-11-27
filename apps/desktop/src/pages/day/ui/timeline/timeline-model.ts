@@ -58,7 +58,8 @@ export function loggedSummary(timeline: DayTimeline) {
   const loggedMs = timeline.logged.blocks
     .filter((block) => block.state === "logged")
     .reduce((sum, block) => sum + block.endMs - block.startMs, 0)
-  return `${formatDuration(loggedMs)} / ${formatDuration(timeline.totals.split.workMs)}`
+  const logged = loggedMs > 0 ? formatDuration(loggedMs) : "0m"
+  return `${logged} / ${formatDuration(timeline.totals.split.workMs)}`
 }
 
 /** The selected item, for placing its details card. */
