@@ -4,8 +4,8 @@ export type LaneWidths = { apps?: number; agents?: number }
 export type ResizableLane = keyof LaneWidths
 
 /** A lane that can be folded to a thin strip of marks. */
-export type LaneName = "apps" | "agents" | "work"
-export const LANE_NAMES = ["apps", "agents", "work"] as const
+export type LaneName = "apps" | "agents" | "work" | "logged"
+export const LANE_NAMES = ["apps", "agents", "work", "logged"] as const
 
 /**
  * A folded lane keeps the room its name needs in the vertical view (the
@@ -15,6 +15,7 @@ const COLLAPSED_PX: Record<LaneName, number> = {
   apps: 64,
   agents: 80,
   work: 64,
+  logged: 96,
 }
 
 const APPS_MIN_PX = 200
@@ -32,7 +33,7 @@ export function clampLane(width: number) {
 }
 
 /**
- * The grid columns: time, Apps, Agents, Work, prompts. A lane the user
+ * The grid columns: time, Apps, Agents, Work, YouTrack, prompts. A lane the user
  * dragged keeps that width; the others share the room above a minimum, and
  * Work takes what is left, so Apps and Work never collapse when many agent
  * sessions run at once.
@@ -56,6 +57,9 @@ export function laneColumns(
   const work = collapsed.has("work")
     ? `${COLLAPSED_PX.work}px`
     : `minmax(${WORK_MIN_PX}px, 1fr)`
+  const logged = collapsed.has("logged")
+    ? `${COLLAPSED_PX.logged}px`
+    : `minmax(${WORK_MIN_PX}px, 1fr)`
   const commits = withCommits ? ` minmax(${COMMITS_MIN_PX}px, 0.8fr)` : ""
-  return `52px ${apps} ${agents}${commits} ${work} 30px`
+  return `52px ${apps} ${agents}${commits} ${work} ${logged} 30px`
 }

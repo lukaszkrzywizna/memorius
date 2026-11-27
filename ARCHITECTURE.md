@@ -169,6 +169,13 @@ that time is not counted (the calendar will add meetings).
 
 Known gap: private apps hide titles but are still counted.
 
+The YouTrack lane (`memorius_core::logged`) puts what is logged or on its
+way next to that work. A proposal sits in its own range, on the work inside
+it. A YouTrack work item has a day and minutes but no time of day, so one
+logged anywhere else is estimated: on the work detected for its issue, then
+on the nearest uncovered work, then after the day's work. Work of 5 minutes
+or longer that nothing covers is a gap.
+
 ## Issue detection
 
 Pure functions in `memorius-core`, table-tested:

@@ -246,6 +246,51 @@ const work: WorkSpan[] = [
   },
 ]
 
+const logged: DayTimeline["logged"] = {
+  blocks: [
+    {
+      startMs: at("09:00"),
+      endMs: at("10:15"),
+      key: "proposal-1",
+      issue: "INT-290",
+      summary: "Manning push re-sends unchanged employees",
+      minutes: 75,
+      workType: "Development",
+      text: "Skip unchanged employees in the push",
+      state: "logged",
+      estimated: false,
+    },
+    {
+      startMs: at("11:30"),
+      endMs: at("12:30"),
+      key: "8-1234",
+      issue: "INT-177",
+      summary: "Sync migration batch 2",
+      minutes: 60,
+      workType: null,
+      text: null,
+      state: "logged",
+      estimated: true,
+    },
+    {
+      startMs: at("12:45"),
+      endMs: at("14:00"),
+      key: "proposal-2",
+      issue: "IS-61",
+      summary: null,
+      minutes: 75,
+      workType: "Development",
+      text: "One Vista read model",
+      state: "proposed",
+      estimated: false,
+    },
+  ],
+  gaps: [
+    { startMs: at("10:15"), endMs: at("11:30") },
+    { startMs: at("14:00"), endMs: at("16:00") },
+  ],
+}
+
 export const sampleDay: DayTimeline = {
   fromMs: dayStart,
   toMs: dayStart + 24 * 3_600_000,
@@ -253,6 +298,7 @@ export const sampleDay: DayTimeline = {
   agents,
   work,
   commits: [],
+  logged,
   totals: {
     activeMs: minutes(415),
     awayMs: minutes(56),
@@ -268,6 +314,7 @@ export const emptyDay: DayTimeline = {
   agents: [],
   work: [],
   commits: [],
+  logged: { blocks: [], gaps: [] },
   totals: { activeMs: 0, awayMs: 0, agentMs: 0, split: split(0) },
 }
 

@@ -7,6 +7,7 @@ use crate::context::{
     Confidence, Evidence, MAX_EVIDENCE, SessionContext, WindowTime, confidence, detect_work,
     session_end_ms,
 };
+use crate::logged::LoggedLane;
 use crate::model::{
     AgentSource, AppRef, AppUsage, ContextSpan, RuleKind, SessionRef, Title, Window,
 };
@@ -55,6 +56,8 @@ pub struct DayTimeline {
     /// in [`TimeSplit::work_ms`]. Worklogs cover it.
     #[serde(skip)]
     pub activity: Vec<(i64, i64)>,
+    /// The YouTrack lane; the store fills it in, `build_day` leaves it empty.
+    pub logged: LoggedLane,
 }
 
 /// One of the user's own git commits on this Mac, for the Commits lane.
@@ -306,6 +309,7 @@ pub fn group(rows: &[ActivityRow], from_ms: i64, to_ms: i64, slot_ms: i64) -> Da
         commits: Vec::new(),
         totals,
         activity: Vec::new(),
+        logged: LoggedLane::default(),
     }
 }
 

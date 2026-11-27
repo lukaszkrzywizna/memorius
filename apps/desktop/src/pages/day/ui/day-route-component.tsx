@@ -12,7 +12,9 @@ import { PromptTextFromLog } from "@/pages/day/ui/prompt-text-from-log"
 import {
   dayTimelineQuery,
   memoriusQueryKey,
+  openLink,
   setSessionsPrivate,
+  trackerStatusQuery,
   weekSummaryQuery,
 } from "@/shared/api/memorius-commands"
 import { todayIso } from "@/shared/lib/local-date"
@@ -27,6 +29,7 @@ export function DayRouteComponent() {
   const nowMs = useNow()
   const query = useQuery(dayTimelineQuery(date, zoom))
   const week = useQuery(weekSummaryQuery(date)).data
+  const tracker = useQuery(trackerStatusQuery()).data?.url
   const queryClient = useQueryClient()
   // A private session changes the day, the week and what agents may propose.
   const markPrivate = useMutation({
@@ -71,6 +74,11 @@ export function DayRouteComponent() {
       highlight={highlight}
       onClearHighlight={() => go({ issue: null })}
       onMarkPrivate={(request) => markPrivate.mutate(request)}
+      onOpenIssue={
+        tracker
+          ? (issue) => void openLink(`${tracker}/issue/${issue}`)
+          : undefined
+      }
       PromptText={PromptTextFromLog}
       CommitDetails={CommitDetailsFromGit}
     />

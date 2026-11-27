@@ -36,6 +36,7 @@ type DayReadyProps = {
   nowMs: number | null
   highlight: string | null
   onMarkPrivate: (decision: SessionsPrivateRequest) => void
+  onOpenIssue?: (issue: string) => void
   PromptText: PromptTextView
   CommitDetails: CommitDetailsView
 }
@@ -50,6 +51,7 @@ export function DayReady({
   nowMs,
   highlight,
   onMarkPrivate,
+  onOpenIssue,
   PromptText,
   CommitDetails,
 }: DayReadyProps) {
@@ -142,6 +144,7 @@ export function DayReady({
               timeline={timeline}
               selection={selection}
               onMarkPrivate={onMarkPrivate}
+              onOpenIssue={onOpenIssue}
               onClose={() => setSelection(null)}
             />
           )

@@ -2,6 +2,7 @@
 import type { AgentBlock } from "./AgentBlock";
 import type { Block } from "./Block";
 import type { DayCommit } from "./DayCommit";
+import type { LoggedLane } from "./LoggedLane";
 import type { Totals } from "./Totals";
 import type { WorkSpan } from "./WorkSpan";
 
@@ -21,4 +22,8 @@ work: Array<WorkSpan>,
 /**
  * The user's own git commits that day, oldest first.
  */
-commits: Array<DayCommit>, totals: Totals, };
+commits: Array<DayCommit>, totals: Totals, 
+/**
+ * The YouTrack lane; the store fills it in, `build_day` leaves it empty.
+ */
+logged: LoggedLane, };

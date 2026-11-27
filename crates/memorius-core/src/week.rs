@@ -305,6 +305,7 @@ fn cell(tally: Tally) -> WeekCell {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::logged::LoggedLane;
     use crate::model::{AppRef, Title};
     use crate::timeline::{Block, TimeSplit, Totals, WorkSpan};
 
@@ -404,6 +405,7 @@ mod tests {
                 split: TimeSplit::default(),
             },
             activity: Vec::new(),
+            logged: LoggedLane::default(),
         };
         let rules = [Rule { id: 1, rule: host }, Rule { id: 2, rule: other }];
 
@@ -462,6 +464,7 @@ mod tests {
                 },
             },
             activity: vec![(540 * MIN, 660 * MIN)],
+            logged: LoggedLane::default(),
         };
         let tuesday = DayTimeline {
             from_ms: DAY,
@@ -480,6 +483,7 @@ mod tests {
                 },
             },
             activity: vec![((1440 + 540) * MIN, (1440 + 560) * MIN)],
+            logged: LoggedLane::default(),
         };
         let proposals = [
             proposal(
@@ -562,6 +566,7 @@ mod tests {
                 },
             },
             activity: Vec::new(),
+            logged: LoggedLane::default(),
         };
         let logged = proposal(
             "SEL-82",

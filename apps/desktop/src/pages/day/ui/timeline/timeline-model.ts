@@ -1,9 +1,10 @@
 import type { DayTimeline } from "@/shared/api/generated/DayTimeline"
 import { windowTitle } from "@/entities/activity"
 import { agentApp } from "@/pages/day/lib/agent-lanes"
+import { formatDuration } from "@/shared/lib/duration"
 import { formatClock } from "@/shared/lib/local-date"
 
-type Lane = "apps" | "agents" | "work"
+type Lane = "apps" | "agents" | "work" | "logged"
 export type Selection = { lane: Lane; index: number }
 
 /** Every prompt the user sent today, with the session it went to. */
@@ -30,7 +31,12 @@ export type PromptMark = ReturnType<typeof promptMarks>[number]
 /** With an issue highlighted, everything else steps back. */
 export function dimmedBy(timeline: DayTimeline, highlight: string | null) {
   if (!highlight)
-    return { apps: () => false, agents: () => false, work: () => false }
+    return {
+      apps: () => false,
+      agents: () => false,
+      work: () => false,
+      logged: () => false,
+    }
   const runs = timeline.work.filter((span) => span.issue === highlight)
   return {
     apps: (index: number) => {
@@ -42,6 +48,30 @@ export function dimmedBy(timeline: DayTimeline, highlight: string | null) {
     },
     agents: (index: number) => timeline.agents[index]?.issue !== highlight,
     work: (index: number) => timeline.work[index]?.issue !== highlight,
+    logged: (index: number) =>
+      timeline.logged.blocks[index]?.issue !== highlight,
+  }
+}
+
+/** Logged time against the day's work, for the YouTrack lane's name. */
+export function loggedSummary(timeline: DayTimeline) {
+  const loggedMs = timeline.logged.blocks
+    .filter((block) => block.state === "logged")
+    .reduce((sum, block) => sum + block.endMs - block.startMs, 0)
+  return `${formatDuration(loggedMs)} / ${formatDuration(timeline.totals.split.workMs)}`
+}
+
+/** The selected item, for placing its details card. */
+export function selectedItem(timeline: DayTimeline, selection: Selection) {
+  switch (selection.lane) {
+    case "apps":
+      return timeline.blocks[selection.index]
+    case "agents":
+      return timeline.agents[selection.index]
+    case "work":
+      return timeline.work[selection.index]
+    case "logged":
+      return timeline.logged.blocks[selection.index]
   }
 }
 
@@ -50,15 +80,7 @@ export function selectionStartMs(
   timeline: DayTimeline,
   selection: Selection | null,
 ) {
-  if (!selection) return undefined
-  switch (selection.lane) {
-    case "apps":
-      return timeline.blocks[selection.index]?.startMs
-    case "agents":
-      return timeline.agents[selection.index]?.startMs
-    case "work":
-      return timeline.work[selection.index]?.startMs
-  }
+  return selection ? selectedItem(timeline, selection)?.startMs : undefined
 }
 
 /** A lane's blocks with what each is and when, for a folded lane's marks. */
@@ -89,6 +111,12 @@ export function laneEntries(timeline: DayTimeline, lane: Lane) {
         index,
         span,
         label: `${span.issue} · ${when(span)}`,
+      }))
+    case "logged":
+      return timeline.logged.blocks.map((block, index) => ({
+        index,
+        span: block,
+        label: `${block.issue} · ${when(block)}`,
       }))
   }
 }

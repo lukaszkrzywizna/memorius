@@ -4,6 +4,8 @@
 pub mod agent;
 pub mod context;
 pub mod issue;
+#[cfg(feature = "store")]
+pub mod logged;
 pub mod model;
 pub mod proposal;
 #[cfg(feature = "store")]

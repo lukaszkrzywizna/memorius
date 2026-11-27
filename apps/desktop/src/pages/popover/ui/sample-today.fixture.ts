@@ -32,6 +32,7 @@ export const sampleToday: DayTimeline = {
   agents: [],
   work: [],
   commits: [],
+  logged: { blocks: [], gaps: [] },
   totals: {
     activeMs: minutes(477),
     awayMs: 0,

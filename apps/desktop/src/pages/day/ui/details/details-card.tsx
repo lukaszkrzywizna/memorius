@@ -41,6 +41,8 @@ export type DetailsCardProps = {
   /** Each agent session in the stretch, each can be marked private. */
   sessions?: SessionRow[]
   privacy?: Privacy
+  /** One action under the rows, for example opening the issue. */
+  link?: { text: string; onClick: () => void }
   onClose: () => void
 }
 
@@ -55,6 +57,7 @@ export function DetailsCard({
   rows,
   sessions,
   privacy,
+  link,
   onClose,
 }: DetailsCardProps) {
   const [main = "", ...rest] = formatDuration(durationMs).split(" ")
@@ -113,6 +116,15 @@ export function DetailsCard({
             <SessionLine key={session.key} session={session} />
           ))}
         </ul>
+      )}
+      {link && (
+        <button
+          type="button"
+          onClick={link.onClick}
+          className="self-start rounded text-xs text-t2 underline-offset-2 outline-none hover:text-foreground hover:underline focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          {link.text}
+        </button>
       )}
       {privacy && (
         <div className="flex items-center gap-3 border-t border-border pt-2.5">

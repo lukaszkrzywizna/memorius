@@ -29,6 +29,8 @@ type DayPageProps = {
   highlight: string | null
   onClearHighlight: () => void
   onMarkPrivate: (decision: SessionsPrivateRequest) => void
+  /** Opens an issue in YouTrack; missing when no tracker is set up. */
+  onOpenIssue?: (issue: string) => void
   /** Shows a prompt's text in its hover card (read from the session log). */
   PromptText: PromptTextView
   /** Shows a commit's details in its hover card (read from git). */
@@ -49,6 +51,7 @@ export function DayPage({
   highlight,
   onClearHighlight,
   onMarkPrivate,
+  onOpenIssue,
   PromptText,
   CommitDetails,
 }: DayPageProps) {
@@ -90,6 +93,7 @@ export function DayPage({
         nowMs={date === today ? nowMs : null}
         highlight={highlight}
         onMarkPrivate={onMarkPrivate}
+        onOpenIssue={onOpenIssue}
         PromptText={PromptText}
         CommitDetails={CommitDetails}
       />
@@ -107,6 +111,7 @@ type DayContentProps = Pick<
   | "onViewChange"
   | "highlight"
   | "onMarkPrivate"
+  | "onOpenIssue"
   | "PromptText"
   | "CommitDetails"
 > & { nowMs: number | null }

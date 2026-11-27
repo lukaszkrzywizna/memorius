@@ -8,6 +8,7 @@ const timeline = {
   agents: [],
   work: [],
   commits: [],
+  logged: { blocks: [], gaps: [] },
   totals: {
     activeMs: 0,
     awayMs: 0,

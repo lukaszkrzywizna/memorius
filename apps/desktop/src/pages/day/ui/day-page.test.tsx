@@ -110,13 +110,56 @@ describe("DayPage", () => {
       />,
     )
 
-    fireEvent.click(screen.getByRole("button", { name: /^INT-290,/ }))
+    fireEvent.click(
+      within(screen.getByLabelText("Work context")).getByRole("button", {
+        name: /^INT-290,/,
+      }),
+    )
 
     const card = screen.getByLabelText("Detected work")
     expect(
       within(card).getByText("[INT-290] Skip unchanged employees"),
     ).toBeInTheDocument()
     expect(screen.queryByLabelText("Selected activity")).not.toBeInTheDocument()
+  })
+
+  it("shows what YouTrack holds next to the work, with the gaps", () => {
+    const onOpenIssue = vi.fn()
+    render(
+      <DayPage
+        date={sampleDate}
+        today="2026-10-11"
+        state={ready}
+        onDateChange={vi.fn()}
+        zoom={15}
+        onZoomChange={vi.fn()}
+        {...extra}
+        onMarkPrivate={vi.fn()}
+        onOpenIssue={onOpenIssue}
+      />,
+    )
+
+    const lane = screen.getByLabelText("YouTrack")
+    expect(
+      within(lane).getByRole("img", { name: "Not logged, 10:15–11:30" }),
+    ).toBeInTheDocument()
+    expect(
+      within(lane).getByRole("button", { name: /^IS-61, 1h 15m, proposed/ }),
+    ).toBeInTheDocument()
+    fireEvent.click(
+      within(lane).getByRole("button", {
+        name: /^INT-177, 1h, logged · time estimated/,
+      }),
+    )
+
+    const card = screen.getByLabelText("YouTrack worklog")
+    expect(
+      within(card).getByText("INT-177 · Sync migration batch 2"),
+    ).toBeInTheDocument()
+    fireEvent.click(
+      within(card).getByRole("button", { name: "INT-177 in YouTrack" }),
+    )
+    expect(onOpenIssue).toHaveBeenCalledWith("INT-177")
   })
 
   it("shows agent sessions in their own lane with a card", () => {
@@ -359,7 +402,10 @@ describe("DayPage", () => {
     fireEvent.click(screen.getByRole("button", { name: /^OrderSync\.fs/ }))
     fireEvent.pointerDown(screen.getByLabelText("Selected activity"))
     expect(screen.getByLabelText("Selected activity")).toBeInTheDocument()
-    const other = screen.getByRole("button", { name: /^INT-290,/ })
+    const other = within(screen.getByLabelText("Work context")).getByRole(
+      "button",
+      { name: /^INT-290,/ },
+    )
     fireEvent.pointerDown(other)
     fireEvent.click(other)
     expect(screen.getByLabelText("Detected work")).toBeInTheDocument()

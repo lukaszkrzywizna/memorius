@@ -24,8 +24,11 @@ import {
   type Selection,
   dimmedBy,
   laneEntries,
+  loggedSummary,
   promptMarks,
+  selectedItem,
 } from "@/pages/day/ui/timeline/timeline-model"
+import { GapMark, LoggedBlock } from "@/pages/day/ui/timeline/logged-block"
 import { WorkBlock } from "@/pages/day/ui/timeline/work-block"
 import { formatClock } from "@/shared/lib/local-date"
 import {
@@ -83,13 +86,7 @@ export function HorizontalTimeline({
   const selected = (lane: Selection["lane"], index: number) =>
     selection?.lane === lane && selection.index === index
   const selectedStart = (() => {
-    if (!selection) return 0
-    const item =
-      selection.lane === "apps"
-        ? timeline.blocks[selection.index]
-        : selection.lane === "agents"
-          ? timeline.agents[selection.index]
-          : timeline.work[selection.index]
+    const item = selection && selectedItem(timeline, selection)
     return item ? box(item).start : 0
   })()
   const height = lanes.card + (card ? 340 : 24)
@@ -117,7 +114,7 @@ export function HorizontalTimeline({
             className="sticky left-0 z-10 shrink-0 bg-well max-[720px]:w-13!"
             style={{ width: LABEL_PX }}
           >
-            {(["apps", "agents", "work"] as const).map((lane) => (
+            {(["apps", "agents", "work", "logged"] as const).map((lane) => (
               <LaneToggle
                 key={lane}
                 lane={lane}
@@ -126,6 +123,13 @@ export function HorizontalTimeline({
                 onToggle={onToggleLane}
               />
             ))}
+            <span
+              title="Logged in YouTrack / your work"
+              className="absolute left-2 text-[11px] whitespace-nowrap text-t5 max-[720px]:hidden"
+              style={{ top: lanes.logged.top + 22 }}
+            >
+              {loggedSummary(timeline)}
+            </span>
             {commits.length > 0 && (
               <LaneLabel top={lanes.commits.top + 4}>Commits</LaneLabel>
             )}
@@ -242,6 +246,41 @@ export function HorizontalTimeline({
               )}
             </div>
             <div
+              aria-label="YouTrack"
+              className="absolute inset-x-0"
+              style={lanes.logged}
+            >
+              {collapsed.has("logged") ? (
+                <CollapsedLane
+                  view="horizontal"
+                  tone="bg-t2"
+                  items={folded("logged")}
+                />
+              ) : (
+                <>
+                  {timeline.logged.gaps.map((gap) => (
+                    <GapMark
+                      key={gap.startMs}
+                      gap={gap}
+                      box={box(gap)}
+                      view="horizontal"
+                    />
+                  ))}
+                  {timeline.logged.blocks.map((block, index) => (
+                    <LoggedBlock
+                      key={`${block.key}:${block.startMs}`}
+                      block={block}
+                      box={box(block)}
+                      view="horizontal"
+                      selected={selected("logged", index)}
+                      dimmed={dimmed.logged(index)}
+                      onSelect={() => onSelect({ lane: "logged", index })}
+                    />
+                  ))}
+                </>
+              )}
+            </div>
+            <div
               aria-label="Your prompts"
               className="absolute inset-x-0"
               style={lanes.prompts}
@@ -314,7 +353,12 @@ export function HorizontalTimeline({
   )
 }
 
-const LANE_TITLES = { apps: "Apps", agents: "Agents", work: "Work" } as const
+const LANE_TITLES = {
+  apps: "Apps",
+  agents: "Agents",
+  work: "Work",
+  logged: "YouTrack",
+} as const
 
 /** A lane's name that folds or unfolds the lane. */
 function LaneToggle({

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { fn } from "storybook/test"
+import { fn, within } from "storybook/test"
 import { DayPage } from "@/pages/day/ui/day-page"
 import {
   busyDay,
@@ -69,8 +69,30 @@ export const BlockSelected: Story = {
 
 export const WorkSelected: Story = {
   play: async ({ canvas, userEvent }) => {
-    await userEvent.click(canvas.getByRole("button", { name: /^INT-290,/ }))
+    await userEvent.click(
+      within(canvas.getByLabelText("Work context")).getByRole("button", {
+        name: /^INT-290,/,
+      }),
+    )
   },
+}
+
+/** YouTrack's lane: logged, estimated and proposed blocks, and gaps. */
+export const LoggedSelected: Story = {
+  tags: ["visual-smoke"],
+  args: { onOpenIssue: fn() },
+  play: async ({ canvas, userEvent }) => {
+    await userEvent.click(
+      within(canvas.getByLabelText("YouTrack")).getByRole("button", {
+        name: /^INT-177,/,
+      }),
+    )
+  },
+}
+
+export const LoggedSelectedVertical: Story = {
+  args: { view: "vertical", onOpenIssue: fn() },
+  play: LoggedSelected.play,
 }
 
 export const AgentSelected: Story = {

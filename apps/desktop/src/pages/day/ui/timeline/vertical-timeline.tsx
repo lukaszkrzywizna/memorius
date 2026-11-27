@@ -25,8 +25,11 @@ import {
   type Selection,
   dimmedBy,
   laneEntries,
+  loggedSummary,
   promptMarks,
+  selectedItem,
 } from "@/pages/day/ui/timeline/timeline-model"
+import { GapMark, LoggedBlock } from "@/pages/day/ui/timeline/logged-block"
 import { WorkBlock } from "@/pages/day/ui/timeline/work-block"
 import {
   readStoredLaneWidths,
@@ -98,9 +101,15 @@ export function VerticalTimeline({
       }))}
     />
   )
-  const header = (lane: LaneName, name: string, resizable: boolean) => (
+  const header = (
+    lane: LaneName,
+    name: string,
+    resizable: boolean,
+    note?: string,
+  ) => (
     <LaneHeader
       name={name}
+      note={note}
       lane={lane}
       open={!collapsed.has(lane)}
       onToggle={onToggleLane}
@@ -108,14 +117,8 @@ export function VerticalTimeline({
     />
   )
   const anchor = (() => {
-    if (!selection) return undefined
-    const item =
-      selection.lane === "apps"
-        ? timeline.blocks[selection.index]
-        : selection.lane === "agents"
-          ? timeline.agents[selection.index]
-          : timeline.work[selection.index]
-    return item && box(item).start
+    const item = selection && selectedItem(timeline, selection)
+    return item ? box(item).start : undefined
   })()
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2 px-4 pb-16 max-[720px]:px-0 max-[720px]:pb-14">
@@ -134,6 +137,7 @@ export function VerticalTimeline({
           {header("agents", "Agents", true)}
           {commits.length > 0 && <span className="text-t4">Commits</span>}
           {header("work", "Work", false)}
+          {header("logged", "YouTrack", false, loggedSummary(timeline))}
           <span title="Your prompts">✦</span>
         </div>
         <div
@@ -216,6 +220,33 @@ export function VerticalTimeline({
                   />
                 ))}
           </div>
+          <div aria-label="YouTrack" className="relative">
+            {collapsed.has("logged") ? (
+              folded("logged", "bg-t2")
+            ) : (
+              <>
+                {timeline.logged.gaps.map((gap) => (
+                  <GapMark
+                    key={gap.startMs}
+                    gap={gap}
+                    box={box(gap)}
+                    view="vertical"
+                  />
+                ))}
+                {timeline.logged.blocks.map((block, index) => (
+                  <LoggedBlock
+                    key={`${block.key}:${block.startMs}`}
+                    block={block}
+                    box={box(block)}
+                    view="vertical"
+                    selected={selected("logged", index)}
+                    dimmed={dimmed.logged(index)}
+                    onSelect={() => onSelect({ lane: "logged", index })}
+                  />
+                ))}
+              </>
+            )}
+          </div>
           <div
             aria-label="Your prompts"
             className="relative border-l border-t1/10"
@@ -291,12 +322,15 @@ export function VerticalTimeline({
  */
 function LaneHeader({
   name,
+  note,
   lane,
   open,
   onToggle,
   onResize,
 }: {
   name: string
+  /** A short figure after the name, for example the logged time. */
+  note?: string
   lane: LaneName
   open: boolean
   onToggle: (lane: LaneName) => void
@@ -320,8 +354,11 @@ function LaneHeader({
           className={`size-3 shrink-0 transition-transform ${open ? "" : "-rotate-90"}`}
         />
         <span className="truncate">{name}</span>
+        {note && open && (
+          <span className="truncate text-[11px] text-t5">{note}</span>
+        )}
       </button>
-      {open && onResize && lane !== "work" && (
+      {open && onResize && lane !== "work" && lane !== "logged" && (
         <span
           role="separator"
           aria-orientation="vertical"

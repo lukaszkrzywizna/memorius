@@ -4,6 +4,7 @@ import type { Evidence } from "@/shared/api/generated/Evidence"
 import { windowTitle } from "@/entities/activity"
 import { agentApp } from "@/pages/day/lib/agent-lanes"
 import { ruleText } from "@/pages/day/lib/work-lane"
+import { loggedNote } from "@/pages/day/ui/timeline/logged-block"
 import type { Selection } from "@/pages/day/ui/timeline/timeline-model"
 import {
   type DetailRow,
@@ -18,6 +19,8 @@ type SelectionDetailsProps = {
   timeline: DayTimeline
   selection: Selection
   onMarkPrivate: (request: SessionsPrivateRequest) => void
+  /** Opens an issue in YouTrack; missing when no tracker is set up. */
+  onOpenIssue?: (issue: string) => void
   onClose: () => void
 }
 
@@ -29,9 +32,10 @@ export function SelectionDetails({
   timeline,
   selection,
   onMarkPrivate,
+  onOpenIssue,
   onClose,
 }: SelectionDetailsProps) {
-  const props = detailsFor(timeline, selection, onMarkPrivate)
+  const props = detailsFor(timeline, selection, onMarkPrivate, onOpenIssue)
   return props ? <DetailsCard {...props} onClose={onClose} /> : null
 }
 
@@ -39,6 +43,7 @@ function detailsFor(
   timeline: DayTimeline,
   selection: Selection,
   onMarkPrivate: SelectionDetailsProps["onMarkPrivate"],
+  onOpenIssue: SelectionDetailsProps["onOpenIssue"],
 ): Omit<DetailsCardProps, "onClose"> | undefined {
   switch (selection.lane) {
     case "apps": {
@@ -149,6 +154,32 @@ function detailsFor(
               ...privacyOf(agent, onMarkPrivate),
             }
           }),
+      }
+    }
+    case "logged": {
+      const block = timeline.logged.blocks[selection.index]
+      if (!block) return undefined
+      const pieces = timeline.logged.blocks.filter((b) => b.key === block.key)
+      const first = pieces[0] ?? block
+      const last = pieces.at(-1) ?? block
+      return {
+        label: "YouTrack worklog",
+        title: block.summary
+          ? `${block.issue} · ${block.summary}`
+          : block.issue,
+        sub: block.estimated
+          ? "Logged in YouTrack with no time of day · placed on your work"
+          : `${range({ startMs: first.startMs, endMs: last.endMs })}`,
+        chips: [
+          { text: loggedNote(block) },
+          ...(block.workType ? [{ text: block.workType }] : []),
+        ],
+        durationMs: block.minutes * 60_000,
+        rows: block.text ? [{ label: "Text", text: block.text }] : [],
+        link: onOpenIssue && {
+          text: `${block.issue} in YouTrack`,
+          onClick: () => onOpenIssue(block.issue),
+        },
       }
     }
   }

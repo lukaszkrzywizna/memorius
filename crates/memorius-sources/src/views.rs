@@ -4,10 +4,12 @@
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
+use jiff::Timestamp;
 use jiff::ToSpan;
 use jiff::civil::{Date, ISOWeekDate, Weekday};
 use jiff::tz::TimeZone;
 use memorius_core::context::{SessionContext, join_session_spans};
+use memorius_core::logged::logged_lane;
 use memorius_core::model::RuleKind;
 use memorius_core::store::{Store, StoreError};
 use memorius_core::time_rules::{TIME_RULES, TimeRules, WeekStart};
@@ -127,6 +129,15 @@ pub fn day_timeline(
         projects: &store.setting::<Vec<String>>(PROJECTS)?.unwrap_or_default(),
     });
     timeline.commits = store.git_commits_between(from_ms, to_ms)?;
+    let date = Timestamp::from_millisecond(from_ms)
+        .map(|at| at.to_zoned(TimeZone::system()).date().to_string())
+        .unwrap_or_default();
+    timeline.logged = logged_lane(
+        &date,
+        &timeline,
+        &store.proposals_between(from_ms, to_ms)?,
+        &store.tracker_worklogs(&date, &date)?,
+    );
     Ok(timeline)
 }
 

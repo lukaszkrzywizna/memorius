@@ -45,7 +45,9 @@ Codex, the git branch, the browser URL, and calendar events.
    proposals itself with it. Memorius can start the
    agent itself (Claude Code, Codex or a custom command, on the user's own
    subscription): on a button, and every day at a chosen time.
-6. **UI**: Day timeline (Apps, Agents and Work context columns, zoom),
+6. **UI**: Day timeline (Apps, Agents, Work context and YouTrack columns,
+   zoom; YouTrack shows logged and proposed time next to the work, and the
+   work that nothing covers),
    Week timesheet, Log queue, tray/menu bar popover, Settings (permissions,
    private apps, rules, calendar sign-in).
 
@@ -102,8 +104,12 @@ proposal cannot be logged again.
    Log queue within 5 s.
 5. An approved proposal logged from the Log queue shows as logged in the Day
    and Week views.
-6. Calendar events from Microsoft 365 show in the Calendar lane after sign-in.
-7. The memory budget above holds in an 8-hour soak test on both platforms.
+6. The Day timeline's YouTrack lane shows each work item logged that day,
+   also one logged outside Memorius (marked as estimated, on the work of its
+   issue), each waiting proposal, and every 5 minutes or more of work that
+   none of them covers.
+7. Calendar events from Microsoft 365 show in the Calendar lane after sign-in.
+8. The memory budget above holds in an 8-hour soak test on both platforms.
 
 ## References
 

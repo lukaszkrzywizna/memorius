@@ -37,13 +37,18 @@ export function horizontalLanes(
     top: commits.top + commits.height + 16,
     height: tall("work", 50),
   }
-  const prompts = { top: work.top + work.height + 16, height: 36 }
+  const logged = {
+    top: work.top + work.height + 16,
+    height: tall("logged", 50),
+  }
+  const prompts = { top: logged.top + logged.height + 16, height: 36 }
   const card = prompts.top + prompts.height + 22
   return {
     apps,
     agents,
     commits,
     work,
+    logged,
     prompts,
     /** Where the grid lines end and the details card starts. */
     linesHeight: prompts.top + prompts.height - 28,
